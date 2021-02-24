@@ -25,6 +25,7 @@ from acme.jax import utils
 from acme.utils import async_utils
 from acme.utils import counting
 from acme.utils import loggers
+import haiku as hk
 import jax
 import jax.numpy as jnp
 import optax
@@ -80,7 +81,7 @@ class SGDLearner(acme.Learner, acme.Saveable):
                optimizer: optax.GradientTransformation,
                data_iterator: Iterator[reverb.ReplaySample],
                target_update_period: int,
-               random_key: networks_lib.PRNGKey,
+               rng: hk.PRNGSequence,
                replay_client: Optional[reverb.Client] = None,
                counter: Optional[counting.Counter] = None,
                logger: Optional[loggers.Logger] = None):
@@ -120,15 +121,14 @@ class SGDLearner(acme.Learner, acme.Saveable):
 
     # Initialize the network parameters
     dummy_obs = utils.add_batch_dim(utils.zeros_like(obs_spec))
-    key_params, key_target, key_state = jax.random.split(random_key, 3)
-    initial_params = self.network.init(key_params, dummy_obs)
-    initial_target_params = self.network.init(key_target, dummy_obs)
+    initial_params = self.network.init(next(rng), dummy_obs)
+    initial_target_params = self.network.init(next(rng), dummy_obs)
     self._state = TrainingState(
         params=initial_params,
         target_params=initial_target_params,
         opt_state=optimizer.init(initial_params),
         steps=0,
-        rng_key=key_state,
+        rng_key=next(rng),
     )
 
     # Update replay priorities

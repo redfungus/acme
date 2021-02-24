@@ -23,7 +23,6 @@ from acme.jax.networks.base import FeedForwardNetwork
 from acme.jax.networks.base import Logits
 from acme.jax.networks.base import Params
 from acme.jax.networks.base import PolicyValueRNN
-from acme.jax.networks.base import PRNGKey
 from acme.jax.networks.base import QNetwork
 from acme.jax.networks.base import RecurrentQNetwork
 from acme.jax.networks.base import Value
