@@ -49,7 +49,7 @@ jax_requirements = [
 ]
 
 env_requirements = [
-    'bsuite',
+    'bsuite @ git+git://github.com/deepmind/bsuite.git#egg=bsuite',
     'dm-control',
     'gym',
     'gym[atari]',
